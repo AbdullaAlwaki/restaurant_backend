@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-
+const mongoose = require("mongoose")
 const addDishesSchema = new mongoose.Schema({
     name: { type: String, required: true },
     images: { type: String, required: true },
