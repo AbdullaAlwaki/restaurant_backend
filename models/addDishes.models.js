@@ -5,7 +5,6 @@ const addDishesSchema = new mongoose.Schema({
     category: { type: String, required: true },
     price: { type: Number, required: true },
     description: { type: String, required: true },
-    
     isVeg: { type: Boolean, required: true },
 },
 {
