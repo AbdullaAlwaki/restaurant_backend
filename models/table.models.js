@@ -1,6 +1,6 @@
-const mongoose = require("mongoose")
+import { Schema, model } from "mongoose";
 
-const TableSchema = mongoose.Schema({
+const TableSchema = Schema({
   name: {
     type: String,
     required: true,
@@ -19,5 +19,5 @@ const TableSchema = mongoose.Schema({
   },
 });
 
-exports.TableModel = mongoose.model('Table', TableSchema);
+export const TableModel = model('Table', TableSchema);
 

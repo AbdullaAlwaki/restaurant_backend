@@ -1,5 +1,5 @@
-const mongoose = require("mongoose")
-const addDishesSchema = new mongoose.Schema({
+import { Schema, model } from "mongoose";
+const addDishesSchema = new Schema({
     name: { type: String, required: true },
     images: { type: String, required: true },
     category: { type: String, required: true },
@@ -11,4 +11,4 @@ const addDishesSchema = new mongoose.Schema({
     timestamps: true,
 });
 
-exports.addDishesModel = mongoose.model("addDishes", addDishesSchema);
+export const addDishesModel = model("addDishes", addDishesSchema);

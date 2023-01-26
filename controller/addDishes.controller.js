@@ -1,6 +1,6 @@
-const { addDishesModel } = require("../models/addDishes.models.js");
+import { addDishesModel } from "../models/addDishes.models.js";
 
-exports.addDishes = async (req, res) => {
+export async function addDishes(req, res) {
   try {
     const { name, images, category, price, description, isVeg } = req.body;
     const addDishes = await addDishesModel.create({
@@ -15,19 +15,19 @@ exports.addDishes = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
-exports.allDishes = async (req, res) => {
+export async function allDishes(req, res) {
   try {
     const dishes = await addDishesModel.find({});
     res.status(200).json({ dishes });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
 
-exports.deleteDishes = async (req, res) => {
+export async function deleteDishes(req, res) {
   try {
     const { id } = req.params;
     const deleted = await addDishesModel.findByIdAndDelete(id);
@@ -40,7 +40,7 @@ exports.deleteDishes = async (req, res) => {
   }
 }
 
-exports.updateDishes = async (req, res) => {
+export async function updateDishes(req, res) {
   try {
     const { id } = req.params;
     const { name, images, category, price, description, isVeg } = req.body;
@@ -66,7 +66,7 @@ exports.updateDishes = async (req, res) => {
   }
 }
 
-exports.getDishes = async (req, res, next) => {
+export async function getDishes(req, res, next) {
   try {
     const { id } = req.params;
     const dishes = await addDishesModel.findById(id);
