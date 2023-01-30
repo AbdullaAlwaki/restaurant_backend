@@ -2,7 +2,7 @@ import { addDishesModel } from "../models/addDishes.models.js";
 
 export async function addDishes(req, res) {
   try {
-    const { name, images, category, price, description, isVeg } = req.body;
+    const { name, images, category, price, description, isVeg, isOffers, isFavorites } = req.body;
     const addDishes = await addDishesModel.create({
       name,
       images,
@@ -10,6 +10,8 @@ export async function addDishes(req, res) {
       price,
       description,
       isVeg,
+      isOffers,
+      isFavorites,
     });
     res.status(200).json({ addDishes });
   } catch (error) {

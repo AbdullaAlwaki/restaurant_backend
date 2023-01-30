@@ -4,7 +4,6 @@ import { db }  from "./helper/db.js";
 import cors from "cors";
 
 db();
-
 const app = express();
 const port = process.env.PORT || 5000;
 app.use(json());
