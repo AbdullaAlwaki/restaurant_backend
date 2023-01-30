@@ -1,6 +1,6 @@
 import express, { json, urlencoded } from "express";
 import router  from "./router/user.router.js";
-import {db}  from "./helper/db.js";
+import { db }  from "./helper/db.js";
 import cors from "cors";
 
 db();

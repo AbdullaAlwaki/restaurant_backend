@@ -6,6 +6,7 @@ const addDishesSchema = new Schema({
     price: { type: Number, required: true },
     description: { type: String, required: true },
     isVeg: { type: Boolean, required: true },
+    
 },
 {
     timestamps: true,
