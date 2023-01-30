@@ -6,7 +6,8 @@ const addDishesSchema = new Schema({
     price: { type: Number, required: true },
     description: { type: String, required: true },
     isVeg: { type: Boolean, required: true },
-    
+    isOffers: { type: Boolean, required: true },
+    isFavorites: { type: Boolean, required: true },
 },
 {
     timestamps: true,
