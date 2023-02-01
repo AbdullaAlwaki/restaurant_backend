@@ -13,7 +13,7 @@ export async function addDishes(req, res) {
       isOffers,
       isFavorites,
     });
-    res.status(200).json({ addDishes });
+    res.status(200).json({ message: "Dishes added" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
