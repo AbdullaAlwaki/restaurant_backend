@@ -15,7 +15,6 @@ const corsOption = {
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
 app.use(cors(corsOption));
-app.use(cors())
 app.use("/api", router);
 app.listen(port, () =>
   console.log(`Listening on port http://localhost:${port}`)
