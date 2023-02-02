@@ -10,7 +10,7 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 
 const corsOption = {
-  origin: ["http://localhost:3000", "https://abdullaalwaki.github.io"],
+  origin: ["http://localhost:3000", "https://abdullaalwaki.github.io","https://mern-restaurant.onrender.com"],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
