@@ -5,7 +5,7 @@ export async function addTable(req, res, next) {
   try {
     const table = new TableModel(req.body);
     await table.save();
-    res.status(200).json(table);
+    res.status(200).json({ message: 'Table booked successfully!' });
   } catch (e) {
     next(e);
   }
