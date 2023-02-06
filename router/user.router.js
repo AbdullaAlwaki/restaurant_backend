@@ -23,7 +23,7 @@ import {
 
 const router = Router();
 
-router.route('/addDishes').get(allDishes).post(addDishes);
+router.route('/addDishes').get(allDishes).post(addDishes).delete(deleteDishes);
 router.route('/addDishes/:id').put(updateDishes).delete(deleteDishes).get(getDishes);
 
 router.route('/bookTable').post(addTable).get(getTables);
