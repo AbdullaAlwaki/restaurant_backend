@@ -31,12 +31,12 @@ export async function allDishes(req, res) {
 
 export async function deleteDishes(req, res) {
   try {
-    const { id } = req.params;
-    const deleted = await addDishesModel.find({ name: id }).deleteOne();
+    const { name } = req.params;
+    const deleted = await addDishesModel.find({ name: name }).deleteOne();
     if (deleted) {
       return res.status(200).send({message :"Dishes deleted"});
     }
-    throw new Error("Dishes not found");
+    return res.status(404).send({error: "Dishes not found"});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
