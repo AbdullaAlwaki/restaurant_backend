@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { AddressSchema } from './address.model.js';
+// import { AddressSchema } from './address.model.js';
 
 const UserSchema = new Schema({
   firstName: {
@@ -18,7 +18,9 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  address: AddressSchema,
+  // address: AddressSchema,
 });
 
-export const UserModel = model('User', UserSchema);
+
+const UserModel = model('User', UserSchema);
+export default UserModel; 
