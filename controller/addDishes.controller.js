@@ -32,7 +32,7 @@ export async function allDishes(req, res) {
 export async function deleteDishes(req, res) {
   try {
     const { name } = req.body;
-    const deleted = await addDishesModel.find({ name: name }).deleteOne();
+    const deleted = await addDishesModel.find({ name }).deleteOne();
     if (deleted) {
       return res.status(200).send({message :"Dishes deleted"});
     }
