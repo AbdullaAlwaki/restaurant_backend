@@ -1,4 +1,4 @@
-import { addDishesModel } from "../models/addDishes.models.js";
+import { addDishesModel } from "../models/Dishes.models.js";
 
 export async function addDishes(req, res) {
   try {
@@ -31,8 +31,8 @@ export async function allDishes(req, res) {
 
 export async function deleteDishes(req, res) {
   try {
-    const { name } = req.body;
-    const deleted = await addDishesModel.find({ name }).deleteOne();
+    const { id } = req.params;
+    const deleted = await addDishesModel.findByIdAndDelete(id);
     if (deleted) {
       return res.status(200).send({message :"Dishes deleted"});
     }

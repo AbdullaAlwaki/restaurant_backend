@@ -5,14 +5,14 @@ import {
     updateDishes,
     deleteDishes,
     getDishes,
-  } from "../controller/addDishes.controller.js";
+  } from "../controller/Dishes.controller.js";
 
 const router = Router();
 
 
-router.route("/addDishes").get(allDishes).post(addDishes).delete(deleteDishes);
+router.route("/Dishes").get(allDishes).post(addDishes);
 router
-  .route("/addDishes/:id")
+  .route("/Dishes/:id")
   .put(updateDishes)
   .delete(deleteDishes)
   .get(getDishes);
