@@ -60,9 +60,9 @@ export async function updateDishes(req, res) {
       { new: true }
     );
     if (updated) {
-      return res.status(200).json({ updated });
+      return res.status(200).json({massage :"Dishes updated"});
     }
-    throw new Error("Dishes not found");
+    res.status(404).json({ error: "Dishes not found" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -75,7 +75,7 @@ export async function getDishes(req, res, next) {
     if (dishes) {
       return res.status(200).json({ dishes });
     }
-    throw new Error("Dishes not found");
+    res.status(404).json({ error: "Dishes not found" });
   } catch (error) {
     next(error);
   }}

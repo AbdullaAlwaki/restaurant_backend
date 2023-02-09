@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
 const contactSchema = mongoose.Schema({
-    name: String,
-    email: String,
-    message: String,
+    name: {type : String, required: true},
+    email: {type : String, required: true},
+    message: {type : String, required: true},
     createdAt: {
         type: Date,
         default: new Date(),
