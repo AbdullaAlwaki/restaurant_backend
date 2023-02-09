@@ -37,7 +37,8 @@ export async function updateTable(req, res, next) {
     const table = await TableModel.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-    res.status(200).json(table);
+    res.status(200).json({ message: 'Table updated successfully!'});
+    
   } catch (e) {
     next(e);
   }
