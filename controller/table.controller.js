@@ -47,8 +47,8 @@ export async function updateTable(req, res, next) {
 export async function deleteTable(req, res, next) {
   try {
     const table = await TableModel.findByIdAndDelete(req.params.id);
-    if(!table) return res.status(404).json({ msg: 'Table not found!' });
-    res.status(200).json({ msg: 'Table deleted successfully!'});
+    if(!table) return res.status(404).json({ massage: 'Table not found!' });
+    res.status(200).json({ message: 'Table deleted successfully!'});
   } catch (e) {
     next(e);
   }
