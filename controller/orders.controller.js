@@ -8,6 +8,7 @@ export const createOrder = async (req, res, next) => {
       order: req.body.order,
       user: req.body.user,
     });
+    
     res.status(200).json({ message: 'order created', newOrder });
   } catch (error) {
     next(error);
