@@ -88,6 +88,7 @@ export const signUp = async (req, res, next) => {
     const token = jwt.sign(payload, process.env.SECRET, { expiresIn: '1h' });
 
     res
+    .status(201)
       .cookie('access_token', token, { httpOnly: true })
       .json({ message: 'you signUp successfully' });
   } catch (error) {
