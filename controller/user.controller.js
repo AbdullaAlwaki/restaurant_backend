@@ -94,7 +94,9 @@ export const signUp = async (req, res, next) => {
       .cookie('access_token', token, { httpOnly: true })
       .json({ message: 'you signUp successfully' });
   } catch (error) {
+    console.log(error)
     next(error);
+
   }
 };
 
