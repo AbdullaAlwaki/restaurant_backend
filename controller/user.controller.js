@@ -87,6 +87,8 @@ export const signUp = async (req, res, next) => {
 
     const token = jwt.sign(payload, process.env.SECRET, { expiresIn: '1h' });
 
+    console.log("hi");
+
     res
     .status(201)
       .cookie('access_token', token, { httpOnly: true })
