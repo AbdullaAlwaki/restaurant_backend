@@ -158,8 +158,10 @@ export const signin = async (req, res, next) => {
           token: token,
           user: user,
         });
+    } else {
+    res.status(401).json({ message: 'you are not in our app',
+   error: "Username or Password is not valid" });
     }
-    res.status(401).json({ message: 'you are not in our app' });
   } catch (error) {
     next(error);
   }
