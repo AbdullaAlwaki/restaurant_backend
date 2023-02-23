@@ -8,23 +8,31 @@ import {
   orderByUser,
 } from '../controller/orders.controller.js';
 import {
-  addUser,
   deleteUser,
   getUser,
   getUsers,
-  login,
+  signin,
   signUp,
   updateUser,
+  logout,
+  verify
 } from '../controller/user.controller.js';
+import { middleWareAdmin } from '../midlleware/middleWareAdmin.js';
+
 
 const router = Router();
 
-router.post('/register', signUp);
-router.post('/login', login);
+router.post('/signup', signUp);
+router.post('/signin', signin);
+
 
 // User routes
-router.route('/users').post(addUser).get(getUsers);
-router.route('/users/:id').get(getUser).put(updateUser).delete(deleteUser);
+router.route('/users').get(/* middleWareAdmin, */getUsers);
+router.route('/users/:id').get(/* middleWareAdmin, */getUser).put(/* middleWareAdmin, */updateUser).delete(/* middleWareAdmin, */deleteUser);
+
+// Verification routes
+router.route("/verify/:id/:token")
+.get(verify);
 
 // Order routes
 router.route('/orders').post(createOrder).get(allOrders);

@@ -1,24 +1,16 @@
-import UserModel from '../models/user.models.js';
+import User from '../models/user.models.js';
 import jwt from 'jsonwebtoken';
-import authToken from '../helper/generateToke.js';
-import { comparePass, hashedPasswordFun } from '../lib/auth.js';
+import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 
-// add a new User
-export async function addUser(req, res, next) {
-  try {
-    const user = new UserModel(req.body);
-    await user.save();
-    if (!user) return res.status(404).json({ message: 'User not added!' });
-    res.status(200).json({ message: 'User added successfully!' });
-  } catch (e) {
-    next(e);
-  }
-}
+import { Token } from '../models/token.models.js';
+import {transporter} from '../midlleware/auth.middleware.js';
+import { verify_message } from '../helper/template.js';
 
 // get all Users
 export async function getUsers(req, res, next) {
   try {
-    const result = await UserModel.find();
+    const result = await User.find();
     res.status(200).json(result);
   } catch (error) {
     next(error);
@@ -28,7 +20,7 @@ export async function getUsers(req, res, next) {
 // get User by ID
 export async function getUser(req, res, next) {
   try {
-    const user = await UserModel.findById(req.params.id);
+    const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found!' });
     res.status(200).json(user);
   } catch (error) {
@@ -39,10 +31,20 @@ export async function getUser(req, res, next) {
 // update User
 export async function updateUser(req, res, next) {
   try {
-    const user = await UserModel.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    res.status(200).json(user);
+    let updatedUser;
+
+    if(req.body.password){
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      updatedUser = await User.findByIdAndUpdate(
+        req.params.id,
+        { ...req.body, password: hashedPassword },
+        { new: true }
+      );
+    }else{
+      updateUser = await User.findByIdAndUpdate( req.params.id, { ...req.body }, { new: true });
+    }
+
+    res.status(200).json({message: 'User updated successfully!',data: {updatedUser}});
   } catch (error) {
     next(error);
   }
@@ -51,7 +53,7 @@ export async function updateUser(req, res, next) {
 // delete User
 export async function deleteUser(req, res, next) {
   try {
-    const user = await UserModel.findByIdAndDelete(req.params.id);
+    const user = await User.findByIdAndDelete(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found!' });
     res.status(200).json({ message: 'User deleted successfully!' });
   } catch (e) {
@@ -63,36 +65,59 @@ export async function deleteUser(req, res, next) {
 
 export const signUp = async (req, res, next) => {
   try {
-    const {firstName,lastName, email, password } = req.body;
+    const {firstName,lastName, email, password, confirm } = req.body;
 
-    if (!firstName || !lastName || !email || !password) {
+    if (!firstName || !lastName || !email || !password || !confirm) {
       return res
-        .status(401)
-        .json({ message: 'you should signUp your firstName,lastName,email and password' });
+        .status(400)
+        .json({ message: `Please fillout the required (*) fields for sign-up!` });
     }
 
-    const foundUser = await UserModel.findOne({ email });
+    const foundUser = await User.findOne({ email });
 
     if (foundUser)
       return res.status(203).json({ message: 'you already in our app' });
 
-    const newUser = await UserModel.create({
+    const user = await User.create({
       firstName,
       lastName,
       email,
-      password: password,
+      password,
+      confirm,
     });
 
-    const payload = { id: newUser._id };
+    let token;
+    if(user){
+      token = jwt.sign({ id: user._id }, process.env.SECRET, { expiresIn: '1d' });
+    }
 
-    const token = jwt.sign(payload, process.env.SECRET, { expiresIn: '1h' });
 
-    console.log("hi");
+    const verification_token = await Token.create({
+      id: user._id,
+      token: crypto.randomBytes(32).toString("hex"),
+    });
+
+    //verify link that will send to new user's email address. e.g.    http://localhost:5000/api/verify/userid/verificationtoken
+    const verifyLink = `${process.env.BASE_URL}/api/verify/${user._id}/${verification_token.token}`;
+
+    //send email to new user
+    
+    await transporter.sendMail({
+      from: `MERN ${process.env.EMAIL}`,
+      to: email,
+      subject: "Welcome to our App!",
+      html: verify_message(verifyLink, firstName + " "+ lastName),
+    }).catch((err)=>{
+      console.log(err);
+    }
+    );
 
     res
     .status(201)
-      .cookie('access_token', token, { httpOnly: true })
-      .json({ message: 'you signUp successfully' });
+      .cookie('access_token', token, { httpOnly: true, expires : new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) })
+      .json({ message: 'you signUp successfully',
+      token: token,
+      user: user });
   } catch (error) {
     console.log(error)
     next(error);
@@ -100,9 +125,9 @@ export const signUp = async (req, res, next) => {
   }
 };
 
-//--------login---------
+//--------signin---------
 
-export const login = async (req, res, next) => {
+export const signin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -112,14 +137,14 @@ export const login = async (req, res, next) => {
         .json({ message: 'you should login your email and password' });
     }
 
-    const user = await UserModel.findOne({ email });
+    const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
       return res.status(404).json({ message: 'you are not in our app' });
     }
 
-    if (await comparePass(password, user.password)) {
-      const token = await authToken.generateToken(user);
+    if (user && await user.checkPassword(password, user.password)) {
+      const token = jwt.sign({ id: user._id }, process.env.SECRET, { expiresIn: '1d' });
 
       res
         .cookie('access_token', token, {
@@ -127,12 +152,85 @@ export const login = async (req, res, next) => {
           maxAge: 3600000 * 5,
           secure: true,
           sameSite: 'none',
-        })
-        .json({ message: 'you logged in successfully' });
-      return;
+          expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+        }).send ({
+          message: 'you login successfully',
+          token: token,
+          user: user,
+        });
     }
-    res.status(403).json({ message: 'make sure of your password and/or email' });
+    res.status(401).json({ message: 'you are not in our app' });
   } catch (error) {
     next(error);
   }
 };
+
+//--------logout---------
+
+export const logout = async (req, res, next) => {
+  try {
+    res.clearCookie('access_token');
+    res.status(200).json({ message: 'you logout successfully' });
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+//--------verify---------
+export const verify = async (req, res, next) => {
+  try {
+    const { id, token } = req.params;
+    
+    //check the id and token in the database
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: 'User not found!' });
+
+    const tokenInDB = await Token.findOne({ id: id, token: token });
+    if (!tokenInDB) return res.status(404).json({ message: 'Token not found!' });
+
+    //update the user's status to verified
+    await User.findByIdAndUpdate(id, { isVerified: true }, { new: true });
+    await Token.findByIdAndDelete(tokenInDB._id);
+
+    res.status(200).json({ message: 'User verified successfully!' });
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+//-----------------forgot password-----------------
+
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    //check if the email is in the database
+    const check = await User.findOne({ email });
+    if (!check) return res.status(404).json({ message: 'Email not found!' });
+
+    //create a reset token
+    const reset_token = await Token.create({
+      id: check._id,
+      token: crypto.randomBytes(32).toString("hex"),
+    });
+
+    //reset link that will send to user's email address. e.g.    http://localhost:5000/api/reset/userid/resettoken
+    const resetLink = `${process.env.BASE_URL}/api/reset/${check._id}/${reset_token.token}`;
+
+    //send email to user
+    await transporter.sendMail({
+      from: `MERN ${process.env.EMAIL}`,
+      to: email,
+      subject: "Reset your password",
+      html: reset_message(resetLink, check.name),
+    });
+
+    res.status(200).json({ message: 'Email sent successfully!' });
+
+  } catch (error) {
+    next(error); 
+  }
+    
+  }
