@@ -23,7 +23,7 @@ const corsOption = {
 
 
 // morgan("tiny");
-app.use(cors(/* corsOption */));
+app.use(cors( corsOption ));
 
 app.use("/api", UserRouter);
 app.use("/api", AddDishesRouter);
