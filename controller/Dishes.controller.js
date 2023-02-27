@@ -20,6 +20,7 @@ export async function addDishes(req, res) {
 }
 
 export async function allDishes(req, res) {
+  console.log(req.cookies , "test")
   try {
     const dishes = await addDishesModel.find({});
     res.status(200).json({ dishes });

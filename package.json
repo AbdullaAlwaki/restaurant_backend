@@ -14,7 +14,7 @@
     "passport-jwt": "^4.0.1"
   },
   "scripts": {
-    "dev": "export NODE_ENV=dev && nodemon server.js",
-    "pro": "export NODE_ENV=pro && node server.js"
+    "dev": "export NODE_ENV=development && nodemon server.js",
+    "pro": "export NODE_ENV=production && node server.js"
   }
 }
