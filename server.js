@@ -5,6 +5,7 @@ import UserRouter from './router/user.router.js';
 import AddDishesRouter from './router/addDishes.router.js';
 import ContactRouter from './router/contact.router.js';
 import tableRouter from './router/table.router.js';
+// import morgan from "morgan";
 
 db();
 const app = express();
@@ -16,6 +17,8 @@ const corsOption = {
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
 };
+
+// morgan("tiny");
 app.use(cors(corsOption));
 app.use('/api', UserRouter);
 app.use('/api', AddDishesRouter);

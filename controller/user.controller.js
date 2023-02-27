@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 
+
 import { Token } from '../models/token.models.js';
 import {transporter} from '../midlleware/auth.middleware.js';
 import { verify_message } from '../helper/template.js';
@@ -70,7 +71,7 @@ export const signUp = async (req, res, next) => {
     if (!firstName || !lastName || !email || !password || !confirm) {
       return res
         .status(400)
-        .json({ message: `Please fillout the required (*) fields for sign-up!` });
+        .json({ message: `Please fill out the required (*) fields for sign-up!` });
     }
 
     const foundUser = await User.findOne({ email });
@@ -125,32 +126,29 @@ export const signUp = async (req, res, next) => {
   }
 };
 
-//--------signin---------
+//--------signIn---------
 
-export const signin = async (req, res, next) => {
+export const signIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res
-        .status(401)
-        .json({ message: 'you should login your email and password' });
+      return res.status(401).send({error: "email or password invalid"})
     }
 
     const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
-      return res.status(404).json({ message: 'you are not in our app' });
+      return res.status(404).send({error: "This User doesn't exist"})
     }
 
     if (user && await user.checkPassword(password, user.password)) {
       const token = jwt.sign({ id: user._id }, process.env.SECRET, { expiresIn: '1d' });
-
       res
         .cookie('access_token', token, {
           httpOnly: true,
           maxAge: 3600000 * 5,
-          secure: true,
+          // secure : process.env.NODE_ENV == "dev"? false : true,
           sameSite: 'none',
           expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
         }).send ({
@@ -159,8 +157,7 @@ export const signin = async (req, res, next) => {
           user: user,
         });
     } else {
-    res.status(401).json({ message: 'you are not in our app',
-   error: "Username or Password is not valid" });
+    res.status(401).json({ error: "Username or Password is not valid or u r not in our app" });
     }
   } catch (error) {
     next(error);

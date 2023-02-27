@@ -11,7 +11,7 @@ import {
   deleteUser,
   getUser,
   getUsers,
-  signin,
+  signIn,
   signUp,
   updateUser,
   logout,
@@ -23,7 +23,7 @@ import { middleWareAdmin } from '../midlleware/middleWareAdmin.js';
 const router = Router();
 
 router.post('/signup', signUp);
-router.post('/signin', signin);
+router.post('/signIn', signIn);
 
 
 // User routes

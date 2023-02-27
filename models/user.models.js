@@ -34,6 +34,11 @@ const UserSchema = new Schema({
           message: 'Passwords are not matched!'
     }
   },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    }
+  ,
   role: {
     type: String,
     enum: ['admin', 'user'],
