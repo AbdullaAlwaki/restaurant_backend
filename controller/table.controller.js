@@ -4,6 +4,7 @@ import { TableModel } from '../models/table.models.js';
 export async function addTable(req, res, next) {
   try {
     console.log(req.cookies);
+    
     const { name, persons, time, date } = req.body;
     // if(!name || !persons || !time || !date) return res.status(404).json({ massage: 'Please fill all fields!' });
     
