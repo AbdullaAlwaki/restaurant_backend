@@ -74,11 +74,9 @@ export const signUp = async (req, res, next) => {
     const { firstName, lastName, email, password, confirm } = req.body;
 
     if (!firstName || !lastName || !email || !password || !confirm) {
-      return res
-        .status(400)
-        .json({
-          message: `Please fill out the required (*) fields for sign-up!`,
-        });
+      return res.status(400).json({
+        message: `Please fill out the required (*) fields for sign-up!`,
+      });
     }
 
     const foundUser = await User.findOne({ email });
@@ -158,8 +156,8 @@ export const signIn = async (req, res, next) => {
       res
         .cookie("access_token", token, {
           httpOnly: true,
-          // secure : process.env.NODE_ENV == "dev"? false : true,
-          // sameSite: 'none',
+          secure: true,
+          sameSite: "none",
           expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
         })
         .send({
@@ -168,11 +166,9 @@ export const signIn = async (req, res, next) => {
           user: user,
         });
     } else {
-      res
-        .status(401)
-        .json({
-          error: "Username or Password is not valid or u r not in our app",
-        });
+      res.status(401).json({
+        error: "Username or Password is not valid or u r not in our app",
+      });
     }
   } catch (error) {
     next(error);
