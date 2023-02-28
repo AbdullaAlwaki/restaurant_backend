@@ -17,7 +17,7 @@ import {
   logout,
   verify
 } from '../controller/user.controller.js';
-import { middleWareAdmin } from '../midlleware/middleWareAdmin.js';
+import { isAdmin, middleWareAdmin } from '../midlleware/middleWareAdmin.js';
 
 
 const router = Router();
@@ -28,8 +28,10 @@ router.post('/signIn', signIn);
 
 // User routes
 router.route('/users').get(/* middleWareAdmin, */getUsers);
-router.route('/users/:id').get(/* middleWareAdmin, */getUser).put(/* middleWareAdmin, */updateUser).delete(/* middleWareAdmin, */deleteUser);
-
+router.route('/users/:id').get(/* middleWareAdmin, */getUser).put(/* middleWareAdmin ,*/updateUser).delete(/* middleWareAdmin ,*/deleteUser);
+router.route("/user/:token").get(isAdmin,(req,res)=>{
+  res.json({admin:true})
+})
 // Verification routes
 router.route("/verify/:id/:token")
 .get(verify);
